@@ -1,0 +1,22 @@
+{
+  "name": "conan-discord-bot",
+  "version": "1.0.0",
+  "description": "Conan dice rolling bot for Discord",
+  "main": "bot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/unquist/conan-discord-bot.git"
+  },
+  "author": "Unquist",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/unquist/conan-discord-bot/issues"
+  },
+  "homepage": "https://github.com/unquist/conan-discord-bot#readme",
+  "dependencies": {
+    "discord.js": "^13.5.1"
+  }
+}
