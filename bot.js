@@ -1,23 +1,37 @@
-const { Client, Intents } = require('discord.js');
 const fs = require('fs');
-const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
+const { Client, Collection, Intents } = require('discord.js');
+const { token } = require('./config.json');
 
-let rawdata = fs.readFileSync('config.json');
-let config = JSON.parse(rawdata);
-    
-const TOKEN = config.botToken
+const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 
-// When the app is ready it will write out Ready using this
+client.commands = new Collection();
+
+const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+
+for (const file of commandFiles) {
+	const command = require(`./commands/${file}`);
+	// Set a new item in the Collection
+	// With the key as the command name and the value as the exported module
+	client.commands.set(command.data.name, command);
+}
+
 client.once('ready', () => {
 	console.log('Ready!');
 });
 
-client.on('message', message => {
-	if (message.content === '!Hello') {
-        // send back "Pong." to the channel the message was sent in
-        message.channel.send('hello to you too.');
+client.on('interactionCreate', async interaction => {
+	if (!interaction.isCommand()) return;
+
+	const command = client.commands.get(interaction.commandName);
+
+	if (!command) return;
+
+	try {
+		await command.execute(interaction);
+	} catch (error) {
+		console.error(error);
+		await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
 	}
 });
 
-// Replace the value between the quotes with your token
-client.login(TOKEN);
+client.login(token);
